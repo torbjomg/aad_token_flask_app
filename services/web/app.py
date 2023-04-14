@@ -1,9 +1,9 @@
 import os
 import uuid
-from flask import Flask, redirect, url_for, session, request, jsonify, render_template
+from flask import Flask, redirect, url_for, session, request, render_template
 import msal
-import requests
 from dotenv import load_dotenv
+from base64 import b64encode
 
 load_dotenv()
 app = Flask(__name__)
@@ -16,17 +16,27 @@ REDIRECT_PATH = "/"
 SCOPE = ["https://graph.microsoft.com/User.Read"]
 SESSION_KEY = "user"
 
+
 @app.route("/")
 def index():
+    if app.debug is True:
+        dummy_token = b64encode(os.urandom(1024)).decode("utf-8").replace("/", "x")
+        return render_template("token.html", token=dummy_token, dummy=True)
+
     if not session.get(SESSION_KEY):
         return redirect(url_for("login"))
-    return render_template("token.html", token=session[SESSION_KEY]["access_token"])
+
+    return render_template(
+        "token.html", token=session[SESSION_KEY]["access_token"], dummy=False
+    )
+
 
 @app.route("/login")
 def login():
     session["state"] = str(uuid.uuid4())
     auth_url = _build_auth_url(state=session["state"])
     return redirect(auth_url)
+
 
 @app.route(REDIRECT_PATH)
 def authorized():
@@ -38,7 +48,7 @@ def authorized():
     result = _build_msal_app().acquire_token_by_authorization_code(
         request.args["code"],
         scopes=SCOPE,
-        redirect_uri=url_for("authorized", _external=True)
+        redirect_uri=url_for("authorized", _external=True),
     )
 
     if "error" in result:
@@ -47,15 +57,18 @@ def authorized():
     session[SESSION_KEY] = result
     return redirect(url_for("index"))
 
+
 def _build_auth_url(scope=None, state=None):
     return _build_msal_app().get_authorization_request_url(
-        SCOPE,
-        state=state,
-        redirect_uri=url_for("authorized", _external=True)
+        SCOPE, state=state, redirect_uri=url_for("authorized", _external=True)
     )
 
+
 def _build_msal_app():
-    return msal.PublicClientApplication(client_id=CLIENT_ID, authority=AUTHORITY, token_cache=None)
+    return msal.PublicClientApplication(
+        client_id=CLIENT_ID, authority=AUTHORITY, token_cache=None
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=1234)

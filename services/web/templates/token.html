@@ -1,27 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Token</title>
+    <meta charset="utf-8">
+    <title>AAD Access Token</title>
     <style>
+        body {
+            font-family: "Helvetica Neue", sans-serif;
+            background-color: #f1f1f1;
+            color: #444;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #token {
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+            min-height: 100px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            word-wrap: break-word;
+        }
+
         button {
-            margin-top: 10px;
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .popup-box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .popup-box.show {
+            display: block;
         }
     </style>
 </head>
-<body>
-    <h1>Access Token:</h1>
-    <textarea id="token" rows="4" cols="50" readonly>{{ token }}</textarea>
-    <br>
-    <button onclick="copyToClipboard()">Copy to Clipboard</button>
 
+<body>
+    <h1>AAD Token</h1>
+    {% if dummy %}
+    <p>This is a randomized dummy token that does nothing :-)</p>
+    {% else %}
+    <p>Dette er et personlig access token for din AAD bruker. Ikke del det med andre eller lagre det på steder hvor
+        andre kan få tilgang til det.</p>
+    {% endif %}
+    <p>Token:</p>
+    <p id="token" rows="4" cols="50">
+        {{ token }}
+    </p>
+    <br>
+    <div class="container">
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        <div id="popup" class="popup-box">Token has been copied to clipboard</div>
+    </div>
     <script>
         function copyToClipboard() {
-            const tokenField = document.getElementById('token');
-            tokenField.select();
-            document.execCommand('copy');
+            const textToCopy = document.getElementById("token").innerText;
+            navigator.clipboard.writeText(textToCopy);
+            showPopup();
+        }
+
+        function showPopup() {
+            const popup = document.getElementById("popup");
+            popup.classList.add("show");
+            setTimeout(() => {
+                popup.classList.remove("show");
+            }, 3000);
         }
     </script>
 </body>
+
 </html>
