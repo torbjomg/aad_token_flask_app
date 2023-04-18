@@ -9,8 +9,9 @@ services:
       - PYTHONUNBUFFERED=1
       - AAD_CLIENT_ID
       - AAD_TENANT_ID
+      - PORT
     ports:
-      - "1234:1234"
+      - "3000:$PORT"
 
 #   nginx:
 #     build: ./services/nginx
