@@ -161,6 +161,6 @@ cython_debug/
 
 .env
 .env.prod
-.devcontainer/
+.devcontainer/ca-bundle.crt
 .vscode/
 *venv/

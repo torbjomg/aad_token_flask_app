@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  vscode:
+    build:
+      context: ../
+      dockerfile: ./.devcontainer/Dockerfile
+      args:
+        PYTHON_TAG: 3.11.2-slim-buster
+        PRE_COMMIT_CONFIG_FILE_PATH: ./.devcontainer/.pre-commit-config.yaml
+        REQUIREMENTS_FILE_PATH: ./requirements.txt
+    volumes:
+      - ..:/workspace
+      - ~/.gitconfig:/root/.gitconfig
+    command: sleep infinity
