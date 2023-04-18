@@ -4,20 +4,22 @@ services:
   web:
     build: ./services/web
     environment:
-      - FLASK_ENV=production
+      - FLASK_DEBUG=false
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
-    expose:
-      - 1234
-
-  nginx:
-    build: ./services/nginx
-    image: nginx:1.23.4
+      - AAD_CLIENT_ID
+      - AAD_TENANT_ID
     ports:
-      - "80:80"
-    volumes:
-      - static_volume:/home/app/web/static
-    depends_on:
-      - web
-volumes:
-  static_volume:
+      - "1234:1234"
+
+#   nginx:
+#     build: ./services/nginx
+#     image: nginx:1.23.4
+#     ports:
+#       - "80:80"
+#     volumes:
+#       - static_volume:/home/app/web/static
+#     depends_on:
+#       - web
+# volumes:
+#   static_volume:
