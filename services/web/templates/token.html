@@ -93,7 +93,7 @@
     <script>
         function copyToClipboard() {
             const textToCopy = document.getElementById("token").innerText;
-            navigator.clipboard.writeText(textToCopy);
+            navigator.clipboard.writeText(textToCopy.replace(/\s+/g, ''));
             showPopup();
         }
 
